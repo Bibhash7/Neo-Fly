@@ -1,5 +1,5 @@
 # Neo-Fly 
-Developed a **Django Rest Framework** based flight booking application that leverages a Neo4j graph database instead of a traditional SQL database. Utilized the **neomodel** ORM for efficient interaction with the data model.
+Developed a **Django Rest Framework** based flight booking application utilizing a Neo4j graph database, offering enhanced performance and flexibility over traditional SQL databases. Employed the **neomodel** ORM to facilitate efficient and seamless interaction with the data model.
 
 ### Iteration 1 : Features:
 - Supports basic CRUD operations for flights and passengers.
