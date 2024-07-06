@@ -1,4 +1,4 @@
-Created a *Django Rest Framework* based Flight Booking application that stores data on Neo4j graph database instead of an SQL database. Utilized *neomodel* ORM for successful interaction with the data model.
+Created a **Django Rest Framework** based Flight Booking application that stores data on Neo4j graph database instead of an SQL database. Utilized **neomodel** ORM for successful interaction with the data model.
 
 ### Iteration 1 : Features:
 - Supports basic CRUD operations on flights and passengers.
