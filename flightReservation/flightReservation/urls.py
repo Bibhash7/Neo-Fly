@@ -32,3 +32,5 @@ urlpatterns = [
     path("cancel-flight/",views.cancel_flight),
     
 ]
+
+
