@@ -13,10 +13,12 @@ Developed a **Django Rest Framework** based flight booking application that leve
 
 ### Neo4j Storage:
 Utilizes Neo4j for storing and managing the graph-based data structure, ensuring efficient data retrieval and storage.
+
 [![DNF-5.png](https://i.postimg.cc/BvLVkjnW/DNF-5.png)](https://postimg.cc/rdTjtF4g)
 
 ### Postman Response and Requests:
-Detailed Postman documentation for request and response handling will be provided.
+Detailed Postman screenshot for request and response handling will be provided.
+
 [![DNF-1.png](https://i.postimg.cc/Nfkbz182/DNF-1.png)](https://postimg.cc/F71jfkBh)
 [![DNF-2.png](https://i.postimg.cc/1tRyD0K0/DNF-2.png)](https://postimg.cc/sB8Frhq1)
 [![DNF-3.png](https://i.postimg.cc/VL91ZHH9/DNF-3.png)](https://postimg.cc/0bNLbZvr)
