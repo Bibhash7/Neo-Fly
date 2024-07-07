@@ -1,20 +1,31 @@
 # Neo-Fly 
 Developed a **Django Rest Framework** based flight booking application utilizing a Neo4j graph database, offering enhanced performance and flexibility over traditional SQL databases. Employed the **neomodel** ORM to facilitate efficient and seamless interaction with the data model.
 
-### Iteration 1 : Features:
+### Features:
 - Supports basic CRUD operations for flights and passengers.
 - Supports booking a flight and canceling a flight.
 - Handles edge cases, such as checking if a flight is fully occupied.
+- Logger for log the exceptions and errors.
+- Send email upon successful booking and cancel booking.
+  
 
 ### Milestones:
 - Establish Connection: 03-06-2024 ✅
 - CRUD Operations: 05-06-2024 ✅
 - Booking and Canceling: 06-06-2024 ✅
+- Logger for trace exceptions: 07-06-2024 ✅
+- Send emails on booking and cancel booking ✅
 
 ### Neo4j Storage:
 Utilizes Neo4j for storing and managing the graph-based data structure, ensuring efficient data retrieval and storage.
 
 [![DNF-5.png](https://i.postimg.cc/BvLVkjnW/DNF-5.png)](https://postimg.cc/rdTjtF4g)
+
+### Email Confirmation:
+Detailed Screenshot of confirmation and cancellation email.
+
+[![DNF-6.png](https://i.postimg.cc/Yq9H5zQ0/DNF-6.png)](https://postimg.cc/WtQCrrWc)
+[![DNF-7.png](https://i.postimg.cc/wMD0PPFZ/DNF-7.png)](https://postimg.cc/bSNxSm79)
 
 ### Postman Response and Requests:
 Detailed Postman screenshot for request and response handling will be provided.
