@@ -5,6 +5,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from utils.constants import FlightAttributes, PassengerAttributes, NoAttribute, ErrorMessage, SuccessMessage
+import logging
+logging.basicConfig(
+    filename="server.log",
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    filemode='a'
+)
 
 @api_view(['POST'])
 def add_flight(request):
@@ -27,11 +33,14 @@ def add_flight(request):
                    available_seats=int(available_seats)
                    ).save()
             return Response({SuccessMessage.SUCCESS.value: SuccessMessage.DATA_STORED.value},status=status.HTTP_201_CREATED)
+            
         else:
+            logging.debug(ErrorMessage.MANDETORY_FIELD_MISSING.value)
             return Response({ErrorMessage.ERROR.value: ErrorMessage.MANDETORY_FIELD_MISSING.value}, status=status.HTTP_400_BAD_REQUEST)
+            
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     
@@ -58,7 +67,7 @@ def fetch_filghts(request):
         return Response({SuccessMessage.SUCCESS.value: list_of_filghts}, status=status.HTTP_200_OK)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
@@ -87,7 +96,7 @@ def update_fight(request, pk):
         return Response({SuccessMessage.SUCCESS.value: SuccessMessage.DATA_UPDATED.value},status=status.HTTP_202_ACCEPTED)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['DELETE'])
@@ -98,7 +107,7 @@ def delete_filght(request,pk):
         return Response({SuccessMessage.SUCCESS.value: SuccessMessage.DATA_REMOVED.value},status=status.HTTP_204_NO_CONTENT)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
@@ -126,7 +135,7 @@ def add_passenger(request):
             return Response({ErrorMessage.ERROR.value: ErrorMessage.MANDETORY_FIELD_MISSING.value}, status=status.HTTP_400_BAD_REQUEST)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
@@ -151,7 +160,7 @@ def fetch_passengers(request):
         return Response({SuccessMessage.SUCCESS.value: list_of_passengers}, status=status.HTTP_200_OK)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['PUT'])
@@ -179,7 +188,7 @@ def update_passenger(request, pk):
         return Response({SuccessMessage.SUCCESS.value: SuccessMessage.DATA_UPDATED.value},status=status.HTTP_202_ACCEPTED)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['DELETE'])
@@ -190,7 +199,7 @@ def delete_passenger(request,pk):
         return Response({SuccessMessage.SUCCESS.value: SuccessMessage.DATA_REMOVED.value},status=status.HTTP_204_NO_CONTENT)
     
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
@@ -204,6 +213,7 @@ def book_flight(request):
             flight = Flights.nodes.get(flight_number=flight_number)
         
             if flight.available_seats == 0:
+                logging.debug(ErrorMessage.REGRET.value)
                 return Response({ErrorMessage.ERROR.value: ErrorMessage.REGRET.value}, status=status.HTTP_400_BAD_REQUEST)
             
             if passenger.booking.is_connected(flight) == False:
@@ -212,13 +222,15 @@ def book_flight(request):
                 flight.save()
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.BOOKED.value},status=status.HTTP_200_OK)
             else:
+                logging.debug(ErrorMessage.ALREADY_BOOKED.value)
                 return Response({ErrorMessage.ERROR.value: ErrorMessage.ALREADY_BOOKED.value}, status=status.HTTP_400_BAD_REQUEST)
         
         else:
+            logging.debug(ErrorMessage.MANDETORY_FIELD_MISSING.value)
             return Response({ErrorMessage.ERROR.value: ErrorMessage.MANDETORY_FIELD_MISSING.value}, status=status.HTTP_400_BAD_REQUEST)
         
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
@@ -236,13 +248,15 @@ def cancel_flight(request):
                 flight.save()
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.CANCELLED.value},status=status.HTTP_200_OK)
             else:
+                logging.debug(ErrorMessage.NO_BOOKING.value)
                 return Response({ErrorMessage.ERROR.value: ErrorMessage.NO_BOOKING.value}, status=status.HTTP_400_BAD_REQUEST)
         
         else:
+            logging.debug(ErrorMessage.MANDETORY_FIELD_MISSING.value)
             return Response({ErrorMessage.ERROR.value: ErrorMessage.MANDETORY_FIELD_MISSING.value}, status=status.HTTP_400_BAD_REQUEST)
         
     except Exception as error:
-        print(error)
+        logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             
