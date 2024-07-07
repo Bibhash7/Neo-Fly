@@ -4,7 +4,8 @@ from datetime import datetime
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from utils.constants import FlightAttributes, PassengerAttributes, NoAttribute, ErrorMessage, SuccessMessage
+from utils.constants import FlightAttributes, PassengerAttributes, NoAttribute, ErrorMessage, SuccessMessage, BookingEmail, CanecllationEmail
+from django.core.mail import EmailMessage
 import logging
 logging.basicConfig(
     filename="server.log",
@@ -220,6 +221,12 @@ def book_flight(request):
                 passenger.booking.connect(flight)
                 flight.available_seats -=1
                 flight.save()
+                email = EmailMessage(
+                    BookingEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
+                    BookingEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
+                    to=[passenger.email]
+                )
+                email.send()
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.BOOKED.value},status=status.HTTP_200_OK)
             else:
                 logging.debug(ErrorMessage.ALREADY_BOOKED.value)
@@ -246,6 +253,12 @@ def cancel_flight(request):
                 passenger.booking.disconnect(flight)
                 flight.available_seats +=1
                 flight.save()
+                email = EmailMessage(
+                    CanecllationEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
+                    CanecllationEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
+                    to=[passenger.email]
+                )
+                email.send()
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.CANCELLED.value},status=status.HTTP_200_OK)
             else:
                 logging.debug(ErrorMessage.NO_BOOKING.value)

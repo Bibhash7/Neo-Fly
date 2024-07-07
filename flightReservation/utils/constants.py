@@ -37,5 +37,28 @@ class SuccessMessage(Enum):
     BOOKED = "Hola, Flight booked. Grab your seat."
     CANCELLED = "Booking has been cancelled successfully."
     
+class BookingEmail(Enum):
+    SUBJECT = "Booking Conformation | {} to {}, Date: {}"
+    BODY = """
+         Dear {},
+         
+         Your flight for {} to {} has been booked! 
+         Desclaimer: Please reach 1 hour before for luggage checking and verification. 
+        
+         Thanks 
+         Team NeoFly 
+    """
+
+class CanecllationEmail(Enum):
+    SUBJECT = "Caneclled| {} to {}, Date: {}"
+    BODY = """
+         Dear {}, 
+         
+         Your flight for {} to {} has been cancelled. 
+        
+         Thanks 
+         Team NeoFly 
+    """
+    
     
     
