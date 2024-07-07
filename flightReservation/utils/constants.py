@@ -28,6 +28,7 @@ class ErrorMessage(Enum):
     ALREADY_BOOKED = "A booking for this flight already exists."
     NO_BOOKING = "No booking for this flight have been associated with this person."
     REGRET = "All seats are occupied, please opt for another flight."
+    EMAIL_PATTERN_ERROR = "Please enter a valid email id."
     
 class SuccessMessage(Enum):
     SUCCESS = "Success"
