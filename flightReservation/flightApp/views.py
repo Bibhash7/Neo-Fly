@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from utils.constants import FlightAttributes, PassengerAttributes, NoAttribute, ErrorMessage, SuccessMessage, BookingEmail, CanecllationEmail
 from django.core.mail import EmailMessage
+from utils.validate_email import validate_emai_pattern
 import logging
 logging.basicConfig(
     filename="server.log",
@@ -123,6 +124,8 @@ def add_passenger(request):
         phone_number = request.data.get(PassengerAttributes.PHONE_NUMBER.value, NoAttribute.EMPTY_STRING.value)
         
         if pid and first_name and last_name and age and email and phone_number:
+            if validate_emai_pattern(email) == False:
+                return Response({ErrorMessage.ERROR.value: ErrorMessage.EMAIL_PATTERN_ERROR.value}, status=status.HTTP_400_BAD_REQUEST)
             Passengers(
                 pid = int(pid),
                 first_name = first_name,
