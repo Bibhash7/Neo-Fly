@@ -7,6 +7,7 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 - Handles edge cases, such as checking if a flight is fully occupied.
 - Logger for log the exceptions and errors.
 - Send email upon successful booking and cancel booking.
+- **99%** performace improvement through multithreading.
   
 
 ### Milestones:
@@ -16,11 +17,16 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 - Logger for trace exceptions: 07-06-2024 ✅
 - Send emails on booking and cancel booking: 07-06-2024 ✅
 - Validate email address: 08-06-2024 ✅
+- Improved 99% performace for booking and cancellation via multithreading: 10-06-2024 ✅
 
 ### Neo4j Storage:
 Utilizes Neo4j for storing and managing the graph-based data structure, ensuring efficient data retrieval and storage.
 
 [![DNF-5.png](https://i.postimg.cc/BvLVkjnW/DNF-5.png)](https://postimg.cc/rdTjtF4g)
+
+### 99% Performace Improvement:
+Detailed Screenshot of execution time before and after multithreading.
+[![DNF-10.jpg](https://i.postimg.cc/nL5HZzFn/DNF-10.jpg)](https://postimg.cc/3yXMF30q)
 
 ### Email Confirmation:
 Detailed Screenshot of confirmation and cancellation email.
