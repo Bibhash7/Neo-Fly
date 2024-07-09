@@ -14,7 +14,8 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 - CRUD Operations: 05-06-2024 ✅
 - Booking and Canceling: 06-06-2024 ✅
 - Logger for trace exceptions: 07-06-2024 ✅
-- Send emails on booking and cancel booking ✅
+- Send emails on booking and cancel booking: 07-06-2024 ✅
+- Validate email address: 08-06-2024 ✅
 
 ### Neo4j Storage:
 Utilizes Neo4j for storing and managing the graph-based data structure, ensuring efficient data retrieval and storage.
