@@ -51,7 +51,7 @@ class BookingEmail(Enum):
     """
 
 class CanecllationEmail(Enum):
-    SUBJECT = "Caneclled| {} to {}, Date: {}"
+    SUBJECT = "Caneclled  | {} to {}, Date: {}"
     BODY = """
          Dear {}, 
          

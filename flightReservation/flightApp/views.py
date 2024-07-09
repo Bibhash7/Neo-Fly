@@ -4,16 +4,25 @@ from datetime import datetime
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from utils.constants import FlightAttributes, PassengerAttributes, NoAttribute, ErrorMessage, SuccessMessage, BookingEmail, CanecllationEmail
-from django.core.mail import EmailMessage
 from utils.validate_email import validate_emai_pattern
+import utils.email_notification as notification
+from concurrent.futures import ThreadPoolExecutor
 import logging
+from utils.constants import (
+    FlightAttributes,
+    PassengerAttributes,
+    NoAttribute,
+    ErrorMessage,
+    SuccessMessage,
+    BookingEmail,
+    CanecllationEmail,
+)
 logging.basicConfig(
     filename="server.log",
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     filemode='a'
 )
-
+pool = ThreadPoolExecutor(max_workers=2)
 @api_view(['POST'])
 def add_flight(request):
     try:
@@ -44,8 +53,7 @@ def add_flight(request):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
+
 
 @api_view(['GET'])
 def fetch_filghts(request):
@@ -71,7 +79,7 @@ def fetch_filghts(request):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 @api_view(['PUT'])
 def update_fight(request, pk):
@@ -100,7 +108,7 @@ def update_fight(request, pk):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 @api_view(['DELETE'])
 def delete_filght(request,pk):
     try:
@@ -111,7 +119,7 @@ def delete_filght(request,pk):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 @api_view(['POST'])
 def add_passenger(request):
@@ -141,7 +149,7 @@ def add_passenger(request):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 @api_view(['GET'])
 def fetch_passengers(request):
@@ -166,7 +174,7 @@ def fetch_passengers(request):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 @api_view(['PUT'])
 def update_passenger(request, pk):
     try:
@@ -194,7 +202,7 @@ def update_passenger(request, pk):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 @api_view(['DELETE'])
 def delete_passenger(request,pk):
     try:
@@ -205,7 +213,7 @@ def delete_passenger(request,pk):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 @api_view(['POST'])
 def book_flight(request):
     try:
@@ -224,12 +232,14 @@ def book_flight(request):
                 passenger.booking.connect(flight)
                 flight.available_seats -=1
                 flight.save()
-                email = EmailMessage(
+                
+                
+                pool.submit(
+                    notification.send_email_notification, 
                     BookingEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
                     BookingEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
-                    to=[passenger.email]
-                )
-                email.send()
+                    [passenger.email]
+                )            
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.BOOKED.value},status=status.HTTP_200_OK)
             else:
                 logging.debug(ErrorMessage.ALREADY_BOOKED.value)
@@ -242,7 +252,7 @@ def book_flight(request):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 @api_view(['POST'])
 def cancel_flight(request):
     try:
@@ -256,12 +266,12 @@ def cancel_flight(request):
                 passenger.booking.disconnect(flight)
                 flight.available_seats +=1
                 flight.save()
-                email = EmailMessage(
+                pool.submit(
+                    notification.send_email_notification, 
                     CanecllationEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
                     CanecllationEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
-                    to=[passenger.email]
-                )
-                email.send()
+                    [passenger.email]
+                )        
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.CANCELLED.value},status=status.HTTP_200_OK)
             else:
                 logging.debug(ErrorMessage.NO_BOOKING.value)
@@ -274,27 +284,3 @@ def cancel_flight(request):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            
-            
-            
-        
-        
-        
-        
-        
-        
-    
-    
-    
-    
-    
-        
-        
-    
-        
-    
-    
-    
-    
-
