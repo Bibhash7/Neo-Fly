@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from utils.validate_email import validate_emai_pattern
 import utils.email_notification as notification
 from concurrent.futures import ThreadPoolExecutor
+import utils.create_pdf as ticket
 import logging
 from utils.constants import (
     FlightAttributes,
@@ -16,6 +17,7 @@ from utils.constants import (
     SuccessMessage,
     BookingEmail,
     CanecllationEmail,
+    AttachmentPath
 )
 logging.basicConfig(
     filename="server.log",
@@ -23,6 +25,7 @@ logging.basicConfig(
     filemode='a'
 )
 pool = ThreadPoolExecutor(max_workers=2)
+
 @api_view(['POST'])
 def add_flight(request):
     try:
@@ -232,13 +235,22 @@ def book_flight(request):
                 passenger.booking.connect(flight)
                 flight.available_seats -=1
                 flight.save()
-                
+                ticket.create_ticket(
+                    passenger.first_name,
+                    passenger.last_name,
+                    flight.departure_city,
+                    flight.arrival_city,
+                    flight.date_of_departure,
+                    flight.time_of_departure
+                )
                 
                 pool.submit(
                     notification.send_email_notification, 
                     BookingEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
                     BookingEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
-                    [passenger.email]
+                    [passenger.email],
+                    AttachmentPath.TICKET_PATH.value
+                    
                 )            
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.BOOKED.value},status=status.HTTP_200_OK)
             else:
@@ -270,7 +282,8 @@ def cancel_flight(request):
                     notification.send_email_notification, 
                     CanecllationEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
                     CanecllationEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
-                    [passenger.email]
+                    [passenger.email],
+                    None
                 )        
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.CANCELLED.value},status=status.HTTP_200_OK)
             else:
