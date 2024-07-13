@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from flightApp.models import Flights, Passengers
 from datetime import datetime
@@ -17,7 +18,7 @@ from utils.constants import (
     SuccessMessage,
     BookingEmail,
     CanecllationEmail,
-    AttachmentPath
+    Attachment
 )
 logging.basicConfig(
     filename="server.log",
@@ -240,8 +241,7 @@ def book_flight(request):
                     passenger.last_name,
                     flight.departure_city,
                     flight.arrival_city,
-                    flight.date_of_departure,
-                    flight.time_of_departure
+                    flight.time_of_departure,
                 )
                 
                 pool.submit(
@@ -249,9 +249,9 @@ def book_flight(request):
                     BookingEmail.SUBJECT.value.format(flight.departure_city,flight.arrival_city, flight.date_of_departure), 
                     BookingEmail.BODY.value.format(passenger.first_name,flight.departure_city,flight.arrival_city), 
                     [passenger.email],
-                    AttachmentPath.TICKET_PATH.value
-                    
-                )            
+                    Attachment.ATTACHMENT_FILE_PATH.value,
+                ) 
+                         
                 return Response({SuccessMessage.SUCCESS.value: SuccessMessage.BOOKED.value},status=status.HTTP_200_OK)
             else:
                 logging.debug(ErrorMessage.ALREADY_BOOKED.value)
