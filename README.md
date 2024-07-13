@@ -1,5 +1,5 @@
 # Neo-Fly 
-Developed a **Django Rest Framework** based flight booking application utilizing a Neo4j graph database, offering enhanced performance and flexibility over traditional SQL databases. Employed the **neomodel** ORM to facilitate efficient and seamless interaction with the data model.
+Developed a **Django Rest Framework** based flight booking application utilizing a Neo4j graph database, offering enhanced performance and flexibility over traditional SQL databases. Employed the **neomodel** ORM to facilitate efficient and seamless interaction with the data model. Also achieved a **99.6%** improvement in booking and cancellation performance through the implementation of **multithreading**.
 
 ### Features:
 - Supports basic CRUD operations for flights and passengers.
@@ -7,6 +7,8 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 - Handles edge cases, such as checking if a flight is fully occupied.
 - Logger for log the exceptions and errors.
 - Send email upon successful booking and cancel booking.
+- **99.6%** performace improvement through multithreading.
+- Dynamically create PDF ticket and send as an attachment upon booking.
   
 
 ### Milestones:
@@ -16,11 +18,17 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 - Logger for trace exceptions: 07-06-2024 ✅
 - Send emails on booking and cancel booking: 07-06-2024 ✅
 - Validate email address: 08-06-2024 ✅
+- Improved **99.6%** performace for booking and cancellation via multithreading: 10-06-2024 ✅
+- Dynamically create PDF ticket and send as an attachment upon booking. 13-07-2024 ✅
 
 ### Neo4j Storage:
 Utilizes Neo4j for storing and managing the graph-based data structure, ensuring efficient data retrieval and storage.
 
 [![DNF-5.png](https://i.postimg.cc/BvLVkjnW/DNF-5.png)](https://postimg.cc/rdTjtF4g)
+
+### 99% Performace Improvement:
+Detailed Screenshot of execution time before and after multithreading.
+[![DNF-10.jpg](https://i.postimg.cc/nL5HZzFn/DNF-10.jpg)](https://postimg.cc/3yXMF30q)
 
 ### Email Confirmation:
 Detailed Screenshot of confirmation and cancellation email.
