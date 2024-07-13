@@ -61,5 +61,8 @@ class CanecllationEmail(Enum):
          Team NeoFly 
     """
     
+class AttachmentPath(Enum):
+    TICKET_PATH = "C:\\Users\\bibha\\Desktop\ALL-Project-Oct-23\\DNF\\flightReservation\static\\Neo_fly_ticket.pdf"
+    
     
     
