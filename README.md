@@ -3,6 +3,7 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 
 ### Features:
 - Supports basic CRUD operations for flights and passengers.
+- Supports search flights.
 - Supports booking a flight and canceling a flight.
 - Handles edge cases, such as checking if a flight is fully occupied.
 - Logger for log the exceptions and errors.
@@ -21,7 +22,7 @@ Developed a **Django Rest Framework** based flight booking application utilizing
 - Validate email address: 08-06-2024 ✅
 - Improved **99.6%** performace for booking and cancellation via multithreading: 10-06-2024 ✅
 - Dynamically create PDF ticket and send as an attachment upon booking: 13-07-2024 ✅
-- Rate limited search flights and booking: 10-08-2024
+- Rate limited search flights and booking: 10-08-2024 ✅
 
 ### Neo4j Storage:
 Utilizes Neo4j for storing and managing the graph-based data structure, ensuring efficient data retrieval and storage.
