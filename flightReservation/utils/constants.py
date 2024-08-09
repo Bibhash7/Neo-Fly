@@ -29,6 +29,9 @@ class ErrorMessage(Enum):
     NO_BOOKING = "No booking for this flight have been associated with this person."
     REGRET = "All seats are occupied, please opt for another flight."
     EMAIL_PATTERN_ERROR = "Please enter a valid email id."
+    FLIGHT_NOT_FOUND = "No flight(s) available for specific source and destination or the date does not match."
+    SEARCH_RATE_LIMIT_EXCEEDED = "You have exhausted maximum number of search for a session. Please sign out and try again."
+    BOOKING_RATE_LIMIT_EXCEEDED = "You have exhausted maximum number of bookings for today. Please try again tomorrow."
     
 class SuccessMessage(Enum):
     SUCCESS = "Success"

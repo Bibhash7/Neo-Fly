@@ -1,5 +1,6 @@
 import os
 from django.shortcuts import render
+from django_ratelimit.decorators import ratelimit
 from flightApp.models import Flights, Passengers
 from datetime import datetime
 from rest_framework import status
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from utils.validate_email import validate_emai_pattern
 import utils.email_notification as notification
 from concurrent.futures import ThreadPoolExecutor
+from here_debugger.debug import here_debug
 import utils.create_pdf as ticket
 import logging
 from utils.constants import (
@@ -77,6 +79,7 @@ def fetch_filghts(request):
                     
                 }
             )
+            logging.error(flight.date_of_departure)
         #TODO: Pagientation
         return Response({SuccessMessage.SUCCESS.value: list_of_filghts}, status=status.HTTP_200_OK)
     
@@ -217,10 +220,56 @@ def delete_passenger(request,pk):
     except Exception as error:
         logging.error(error)
         return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
+    
+@ratelimit(key='ip', rate='5/m', block=False)
+@api_view(['GET'])
+def search_flights(request):
+    try:
+        is_rate_limited = getattr(request, 'limited', False)
+        if is_rate_limited:
+            return Response({ErrorMessage.ERROR.value: ErrorMessage.SEARCH_RATE_LIMIT_EXCEEDED.value}, status=status.HTTP_403_FORBIDDEN)
+        
+        departure_city = request.data.get(FlightAttributes.DEPARTURE_CITY.value, NoAttribute.EMPTY_STRING.value)
+        arrival_city = request.data.get(FlightAttributes.ARRIVAL_CITY.value, NoAttribute.EMPTY_STRING.value)
+        date_of_departure = request.data.get(FlightAttributes.DATE_OF_DEPARTURE.value, NoAttribute.EMPTY_STRING.value)
+        flights = Flights.nodes.filter(departure_city=departure_city, arrival_city=arrival_city,date_of_departure=datetime.strptime(date_of_departure, '%Y-%m-%d').date())
+        list_of_filghts = []
+        if len(flights):
+            
+            for flight in flights:
+                list_of_filghts.append(
+                    {
+                        "flight_number": flight.flight_number,
+                        "operating_airLines": flight.operating_airLines,
+                        "departure_city": flight.departure_city,
+                        "arrival_city": flight.arrival_city,
+                        "date_of_departure": str(flight.date_of_departure),
+                        "time_of_departure": str(flight.time_of_departure),
+                        "available_seats": flight.available_seats
+                        
+                    }
+                )
+            return Response({SuccessMessage.SUCCESS.value: list_of_filghts}, status=status.HTTP_200_OK)
+        
+        else:
+            return Response({ErrorMessage.ERROR.value: ErrorMessage.FLIGHT_NOT_FOUND.value}, status=status.HTTP_404_NOT_FOUND)
+        
+    except Exception as error:
+        logging.error(error)
+        return Response({ErrorMessage.ERROR.value: ErrorMessage.INTERNAL_SERVAR_ERROR.value}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+    
+    
+@ratelimit(key='ip', rate='5/d', block=False)    
 @api_view(['POST'])
 def book_flight(request):
     try:
+        is_rate_limited = getattr(request, 'limited', False)
+        if is_rate_limited:
+            return Response({ErrorMessage.ERROR.value: ErrorMessage.BOOKING_RATE_LIMIT_EXCEEDED.value}, status=status.HTTP_403_FORBIDDEN)
+        
         pid = request.data.get(PassengerAttributes.PID.value, NoAttribute.EMPTY_STRING.value)
         flight_number = request.data.get(FlightAttributes.FLIGHT_NUMBER.value, NoAttribute.EMPTY_STRING.value)
         
