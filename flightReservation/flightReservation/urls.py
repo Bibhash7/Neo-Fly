@@ -30,6 +30,7 @@ urlpatterns = [
     path("delete-passenger/<int:pk>",views.delete_passenger),
     path("book-flight/",views.book_flight),
     path("cancel-flight/",views.cancel_flight),
+    path("search-flights/",views.search_flights),
     
 ]
 
