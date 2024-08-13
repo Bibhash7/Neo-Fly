@@ -1,5 +1,4 @@
 import os
-from django.shortcuts import render
 from django_ratelimit.decorators import ratelimit
 from flightApp.models import Flights, Passengers
 from datetime import datetime
@@ -23,7 +22,7 @@ from utils.constants import (
     Attachment
 )
 logging.basicConfig(
-    filename="server.log",
+    filename= os.environ.get("LOGFILE"),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     filemode='a'
 )
@@ -41,14 +40,15 @@ def add_flight(request):
         available_seats = request.data.get(FlightAttributes.AVAILABLE_SEATS.value, NoAttribute.EMPTY_STRING.value)
         
         if flight_number and operating_airLines and departure_city and arrival_city and date_of_departure and time_of_departure and available_seats:
-            Flights(flight_number=int(flight_number),
-                   operating_airLines=operating_airLines,
-                   departure_city=departure_city,
-                   arrival_city= arrival_city,
-                   date_of_departure=datetime.strptime(date_of_departure, '%m-%d-%Y').date(),
-                   time_of_departure=datetime.strptime(time_of_departure, '%m/%d/%y %H:%M:%S'),
-                   available_seats=int(available_seats)
-                   ).save()
+            Flights(
+                flight_number=int(flight_number),
+                operating_airLines=operating_airLines,
+                departure_city=departure_city,
+                arrival_city= arrival_city,
+                date_of_departure=datetime.strptime(date_of_departure, '%m-%d-%Y').date(),
+                time_of_departure=datetime.strptime(time_of_departure, '%m/%d/%y %H:%M:%S'),
+                available_seats=int(available_seats)
+                ).save()
             return Response({SuccessMessage.SUCCESS.value: SuccessMessage.DATA_STORED.value},status=status.HTTP_201_CREATED)
             
         else:
@@ -65,21 +65,8 @@ def add_flight(request):
 def fetch_filghts(request):
     try:
         flights = Flights.nodes.all()
-        list_of_filghts = []
-        for flight in flights:
-            list_of_filghts.append(
-                {
-                    "flight_number": flight.flight_number,
-                    "operating_airLines": flight.operating_airLines,
-                    "departure_city": flight.departure_city,
-                    "arrival_city": flight.arrival_city,
-                    "date_of_departure": str(flight.date_of_departure),
-                    "time_of_departure": str(flight.time_of_departure),
-                    "available_seats": flight.available_seats
-                    
-                }
-            )
-            logging.error(flight.date_of_departure)
+        list_of_filghts = [flight.serialize() for flight in flights]
+        
         #TODO: Pagientation
         return Response({SuccessMessage.SUCCESS.value: list_of_filghts}, status=status.HTTP_200_OK)
     
@@ -162,19 +149,8 @@ def add_passenger(request):
 def fetch_passengers(request):
     try:
         passengers = Passengers.nodes.all()
-        list_of_passengers = []
-        for passenger in passengers:
-            list_of_passengers.append(
-                {
-                    "pid": passenger.pid,
-                    "first_name": passenger.first_name,
-                    "last_name": passenger.last_name,
-                    "age": passenger.age,
-                    "email": passenger.email,
-                    "phone_number": passenger.phone_number,
-                    
-                }
-            )
+        list_of_passengers = [passenger.serialize() for passenger in passengers]
+        
         #TODO: Pagientation
         return Response({SuccessMessage.SUCCESS.value: list_of_passengers}, status=status.HTTP_200_OK)
     
@@ -234,22 +210,9 @@ def search_flights(request):
         arrival_city = request.data.get(FlightAttributes.ARRIVAL_CITY.value, NoAttribute.EMPTY_STRING.value)
         date_of_departure = request.data.get(FlightAttributes.DATE_OF_DEPARTURE.value, NoAttribute.EMPTY_STRING.value)
         flights = Flights.nodes.filter(departure_city=departure_city, arrival_city=arrival_city,date_of_departure=datetime.strptime(date_of_departure, '%Y-%m-%d').date())
-        list_of_filghts = []
-        if len(flights):
-            
-            for flight in flights:
-                list_of_filghts.append(
-                    {
-                        "flight_number": flight.flight_number,
-                        "operating_airLines": flight.operating_airLines,
-                        "departure_city": flight.departure_city,
-                        "arrival_city": flight.arrival_city,
-                        "date_of_departure": str(flight.date_of_departure),
-                        "time_of_departure": str(flight.time_of_departure),
-                        "available_seats": flight.available_seats
-                        
-                    }
-                )
+        
+        if flights:
+            list_of_filghts = [flight.serialize() for flight in flights]
             return Response({SuccessMessage.SUCCESS.value: list_of_filghts}, status=status.HTTP_200_OK)
         
         else:

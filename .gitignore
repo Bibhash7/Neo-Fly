@@ -25,6 +25,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 *.env
+*.log
 MANIFEST
 
 # PyInstaller
@@ -214,3 +215,4 @@ dist/**
 package.nls.*.json
 l10n/
 python-env-tools/**
+.idea

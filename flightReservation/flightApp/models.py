@@ -9,6 +9,17 @@ class Flights(StructuredNode):
     date_of_departure = DateProperty(required=True)
     time_of_departure = DateTimeProperty(required=True)
     available_seats = IntegerProperty(required=True)
+    
+    def serialize(self):
+        return {
+            'flight_number': self.flight_number,
+            'operating_airLines': self.operating_airLines,
+            'departure_city': self.departure_city,
+            'arrival_city': self.arrival_city,
+            'date_of_departure': str(self.date_of_departure),
+            'time_of_departure': str(self.time_of_departure),
+            'available_seats': self.available_seats,
+        }
 
 
 class Passengers(StructuredNode):
@@ -20,6 +31,16 @@ class Passengers(StructuredNode):
     phone_number = StringProperty(required=True)
     booking = RelationshipTo(Flights,'BOOKED_TO')
     
+    def serialize(self):
+        return {
+            "pid": self.pid,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "age": self.age,
+            "email": self.email,
+            "phone_number": self.phone_number,
+        
+        }
 
     
     
